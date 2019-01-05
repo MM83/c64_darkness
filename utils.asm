@@ -83,13 +83,17 @@ _write_text:
 		rts
 
 		
-_var_cycle_delay_lo: .byte $aF
-_var_cycle_delay_hi: .byte $aF
+_var_cycle_delay_lo: .byte $af
 
-.macro CycleDelay()
+
+
+.macro CycleDelay(amount_hi)
 {
+	lda #amount_hi
+	sta $40
 	jsr _cycle_delay
 }
+
 
 _cycle_delay:
 	ldx #00
@@ -100,7 +104,7 @@ _cycle_delay:
 		bne _cycle_delay_x
 	ldx #00
 	iny
-	cpy _var_cycle_delay_hi
+	cpy $40
 	bne _cycle_delay_x
 	rts
 

@@ -1,8 +1,8 @@
 		
-var_missile_0_vel: .byte $12
-var_missile_1_vel: .byte $13
-var_missile_2_vel: .byte $14
-var_missile_3_vel: .byte $15
+var_missile_0_vel: .byte $19
+var_missile_1_vel: .byte $08
+var_missile_2_vel: .byte $16
+var_missile_3_vel: .byte $0a
 
 
 .macro MoveMissiles()
@@ -160,8 +160,8 @@ missile_3_switch:
 		lda #235
 		sta $d00b
 		
-		//set the land sprites to be twice the size:
-		lda #%00111111
+		//set the land sprites and two missiles to be twice the size:
+		lda #%00110101
 		sta $d01d
 		sta $d017
 		
