@@ -3,20 +3,24 @@
 
 #import "sound.asm"
 
+var_freq_table:
 
-*=$2000
+note_C0: .word $0115
+note_Cs0: .word $0125
+note_D0: .word $0137
+note_Ds0: .word $0149
+note_E0: .word $015d
+note_F0: .word $0172
+note_Fs0: .word $0188
+note_G0: .word $019f
+
+*=$2000                                         
 main_start:
 ClearSID();
-//Set volume of 0(?) to max
-lda #$0f
-sta $d418
 
-ConfigEnv0($88, $88);
-ConfigEnv1($88, $88);
-ConfigEnv2($88, $88);
+		ConfigEnv0($0f, $00);
+		PlayVoice(0, $01, $12, 3);
 
-PlayVoice(0, 17, 27, 0);
-PlayVoice(1, 27, 37, 0);
-PlayVoice(2, 37, 47, 0);
 
 jmp *
+

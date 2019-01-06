@@ -73,6 +73,35 @@ clear_sid_loop:
 	}
 }
 
+
+.macro PlayNote(voice, note, wave){
+	//17, 33, 65, 129
+	.if(wave == 0){
+		.eval wave = 17;
+	}
+	.if(wave == 1){
+		.eval wave = 33;
+	}
+	.if(wave == 2){
+		.eval wave = 65;
+	}
+	.if(wave == 3){
+		.eval wave = 129;
+	}
+	ldx note + 1
+	ldy note
+	lda #wave
+	.if(voice == 0){
+		jsr play_note_0
+	}
+	.if(voice == 1){
+		jsr play_note_1
+	}
+	.if(voice == 2){
+		jsr play_note_2
+	}
+}
+
 play_note_0:
 	sta $10		//Store the desired waveform
 	lda #00		//Load 0 (no waveform)
