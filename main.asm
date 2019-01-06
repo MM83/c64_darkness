@@ -40,7 +40,7 @@ intro_start:
 		sta $d020
 		sta $d021
 		
-		/*
+		
 		
 		CycleDelay($af);
 		CycleDelay($af);
@@ -104,7 +104,7 @@ intro_start:
 		CycleDelay($af);
 		CycleDelay($af);
 		
-		*/
+		
 		
 		SetSpace();
 		SetMissileSprites();
@@ -141,8 +141,6 @@ intro_start:
 		end_missiles:	
 			
 		//Turn off all sprites and make screen white
-		
-		
 		
 		FullscreenExplosion();
 		
