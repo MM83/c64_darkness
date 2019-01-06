@@ -385,10 +385,3 @@ _sub_inc_set_rnd:
 			bne loop_draw_curve_3		
 }
 
-.macro SetSpace()
-{
-	ClearScreen(0, 1);
-	SetCharColourWholeScreen(1);
-	DrawStarfield();
-}
-

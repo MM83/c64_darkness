@@ -20,8 +20,8 @@ var_intro_text_date_0: .text "Oct 04, 1986"
 var_intro_text_date_1: .text "Oct 05, 1986"
 var_intro_text_loc_0: .text "NORAD, Colorado, USA"
 var_intro_text_loc_1: .text "PCBH, Moscow, Soviet Union"
-var_intro_text_loc_2: .text "Ionosphere, Atlantic Ocean"
-
+var_intro_text_loc_2: .text "Ionosphere, Pacific Ocean"
+										 
 var_war_text_0: .text "Immediate Casualties"
 var_war_stats_0: .text "2,734,532,342"              
 var_war_text_1: .text "Civilisation Prospects"
@@ -39,6 +39,8 @@ intro_start:
 		lda #00               
 		sta $d020
 		sta $d021
+		
+		/*
 		
 		CycleDelay($af);
 		CycleDelay($af);
@@ -98,9 +100,12 @@ intro_start:
 		WriteString(14, 1, 12, var_intro_text_date_0, 1);
 		CycleDelay($af);
 		CycleDelay($af);
-		WriteString(7, 3, 26, var_intro_text_loc_2, 1);
+		WriteString(7, 3, 25, var_intro_text_loc_2, 1);
 		CycleDelay($af);
 		CycleDelay($af);
+		
+		*/
+		
 		SetSpace();
 		SetMissileSprites();
 		
@@ -115,11 +120,12 @@ intro_start:
 			inx
 			cpx #200                            
 			bne loop_missile_x
-			
 		ldx #00
 		iny
 		cpy #20
 		bne loop_missile_x
+		
+		CheckSatTick();//This method controls the timer on the satellite display
 		
 		ldy $30//Check if missiles have run out of time
 		iny
@@ -168,6 +174,30 @@ intro_start:
 		
 		rts
 
+var_sat_tick: .byte $00
+var_sat_char: .byte $38
+
+.macro CheckSatTick()
+{
+	jsr check_sat_tick
+}
+check_sat_tick:
+	ldx var_sat_tick
+	inx
+	stx var_sat_tick
+	cpx #40
+	bne ret_sat_tick 
+	
+	ldx #00
+	stx var_sat_tick
+	ldx var_sat_char
+	stx $0427
+	inx
+	stx var_sat_char
+	rts	
+
+ret_sat_tick:
+	rts
 		
 .macro FullscreenExplosion(){
 
@@ -209,7 +239,15 @@ inc_fs_exp_hi:
 		rts
 		
 
+.macro SetSpace()
+{
+	ClearScreen(0, 1);
+	SetCharColourWholeScreen(1);
+	DrawStarfield();
+	WriteString(0, 0, 40, var_basic_satellite_text, 13);
+}
 
+var_basic_satellite_text: .text "SPYSAT 01 LON 63.61 LAT -175.64 23:59:57"
 
 
 //================================================================================ END INTRO
