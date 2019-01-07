@@ -294,9 +294,6 @@ inc_fs_exp_hi:
 var_basic_satellite_text: .text "SODSAT 01 LON 63.61 LAT -175.64 23:59:57"
 
 
-#import "utils.asm"
-#import "missiles.asm"
-
 // TODO - THIS IS APPROXIMATE, THERE MAY BE MORE
 *=$3800
 title_chars_start:

@@ -4,6 +4,10 @@
 #import "sprites.asm"
 *=$2000
 #import "char_map.asm"
+
+#import "utils.asm"
+#import "missiles.asm"
+
 *=$4000
 main_start:
 		InitSeededRandom();
@@ -98,15 +102,16 @@ draw_player_stats:
 }	
 
 
-var_home_selected_option: .byte $00
 
 
 draw_home_options:
-	WriteString(1, 7, 7, var_home_option_fortify, 12);
-	WriteString(1, 8, 7, var_home_option_nourish, 12);
-	WriteString(1, 9, 8, var_home_option_scavenge, 12);
-	WriteString(1, 10, 9, var_home_option_inventory, 12);
-	WriteString(1, 11, 5, var_home_option_sleep, 12);
+	//TODO - These strings are all the same length, this could be optimised
+	
+	WriteString(0, 7, 12, var_home_option_fortify, 12);
+	WriteString(0, 8, 12, var_home_option_nourish, 12);
+	WriteString(0, 9, 12, var_home_option_scavenge, 12);
+	WriteString(0, 10, 12, var_home_option_inventory, 12);
+	WriteString(0, 11, 12, var_home_option_sleep, 12);
 	
 	//Now we've written out the fucking text, draw the selected option
 	
@@ -132,36 +137,53 @@ draw_home_options:
 	
 var_last_joystick: .byte $00
 
+var_home_selected_option: .byte $00
+
 home_runtime:
 	lda $dc01					// Load joy values
 	cmp var_last_joystick		// Compare to previous
 	sta var_last_joystick		// Store values
 	bne home_runtime_joy_update	// If changed, update
-	home_runtime_rtn:
 	jmp home_runtime
-	
+
 home_runtime_joy_update:
-	inc $d020
-	lda var_last_joystick
-	and #01
-	beq home_runtime_inc_option
-	lda var_last_joystick
-	and #02
-	beq home_runtime_dec_option
+	lda $dc01
+	and #$02
+	beq home_inc_option
+	lda $dc01
+	and #$01
+	beq home_dec_option
 	jmp home_runtime
 
-home_runtime_inc_option:
-	lda var_last_joystick
-	clc
-	adc #40
-	sta var_last_joystick
-	DrawHomeOptions();
-	jmp home_runtime_rtn
+// Increment the home option
 
-home_runtime_dec_option:
-	lda var_last_joystick
+home_option_change_finish:
+	sta var_home_selected_option
+	DrawHomeOptions();
+	jmp home_runtime
+
+
+home_inc_option:
+	lda var_home_selected_option
 	clc
 	adc #40
-	sta var_last_joystick
-	DrawHomeOptions();
-	jmp home_runtime_rtn
+	cmp #200
+	beq reset_home_inc_option
+	jmp home_option_change_finish
+	
+reset_home_inc_option:
+	lda #00
+	jmp home_option_change_finish
+	
+// Decrement the home option
+	
+home_dec_option:
+	lda var_home_selected_option
+	sec
+	sbc #40
+	bcc reset_home_dec_option
+	jmp home_option_change_finish
+	
+reset_home_dec_option:
+	lda #160
+	jmp home_option_change_finish
