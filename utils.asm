@@ -385,6 +385,25 @@ _sub_inc_set_rnd:
 			bne loop_draw_curve_3		
 }
 
+	
+.macro DrawStatsHeader()
+{
+	jsr draw_stats_header
+}
+
+var_stat_health: .byte $10
+var_stat_immune: .byte $20
+var_stat_morale: .byte $30
+var_stat_hunger: .byte $40
+var_stat_thirst: .byte $50
+var_stat_energy: .byte $60
+
+var_home_option_fortify: .text "FORTIFY"
+var_home_option_nourish: .text "NOURISH"
+var_home_option_scavenge: .text "SCAVENGE"
+var_home_option_inventory: .text "INVENTORY"
+var_home_option_sleep: .text "SLEEP"
+
 var_standard_header_chars:
 .byte $53,$15,$0E,$20,$30,$35,$2F,$31,$30,$2F,$38,$36,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$30,$36,$3A,$30,$30,$01,$0D
 .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

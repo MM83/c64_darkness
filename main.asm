@@ -4,7 +4,6 @@
 #import "sprites.asm"
 *=$2000
 #import "char_map.asm"
-
 *=$4000
 main_start:
 		InitSeededRandom();
@@ -12,14 +11,13 @@ main_start:
 		// set screen memory ($0400) and charset bitmap offset ($2000)
 		lda #$18//Lower byte controls the address, somehow
 		sta $d018
-		
 		ClearScreen(0, 0);
 		//Disable the keyboard, see if this makes the fucking joysticks work
 		lda #$e0
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-		jsr intro_start
+	//	jsr intro_start
 		jsr menu_start
 		
 	main_start_await_fire:
@@ -35,10 +33,12 @@ start_game:
 	jmp *
 	
 game_start_title:
+
 	ClearScreen(0, 0);
 	lda #00
 	sta $d020
 	sta $d021
+	/*
 	CycleDelay($ff);
 	CycleDelay($ff);
 	WriteString(14, 1, 12, var_intro_text_date_1, 1);
@@ -48,6 +48,7 @@ game_start_title:
 	CycleDelay($ff);
 	CycleDelay($ff);
 	ClearScreen(0, 0);
+	*/
 	rts
 
 #import "sound.asm"
@@ -57,35 +58,14 @@ game_start_title:
 	jsr home_screen
 }
 
+
 home_screen:
 	ClearScreen(0, 0);
 	DrawStatsHeader();
 	DrawPlayerStats();
 	DrawHomeOptions();
+	HomeRuntime();
 	rts
-	
-	
-.macro DrawStatsHeader()
-{
-	jsr draw_stats_header
-}
-
-
-
-var_stat_health: .byte $10
-var_stat_immune: .byte $20
-var_stat_morale: .byte $30
-var_stat_hunger: .byte $40
-var_stat_thirst: .byte $50
-var_stat_energy: .byte $60
-
-var_home_option_fortify: .text "FORTIFY"
-var_home_option_nourish: .text "NOURISH"
-var_home_option_scavenge: .text "SCAVENGE"
-var_home_option_inventory: .text "INVENTORY"
-var_home_option_sleep: .text "SLEEP"
-
-var_home_selected_option: .byte $00
 
 .macro ResetPlayerStats()
 {
@@ -117,10 +97,70 @@ draw_player_stats:
 	jsr draw_home_options
 }	
 
+
+var_home_selected_option: .byte $00
+
+
 draw_home_options:
 	WriteString(1, 7, 7, var_home_option_fortify, 12);
 	WriteString(1, 8, 7, var_home_option_nourish, 12);
 	WriteString(1, 9, 8, var_home_option_scavenge, 12);
 	WriteString(1, 10, 9, var_home_option_inventory, 12);
 	WriteString(1, 11, 5, var_home_option_sleep, 12);
+	
+	//Now we've written out the fucking text, draw the selected option
+	
+	//Load the option offset
+	ldx var_home_selected_option
+	
+	//Load left bracket character
+	lda #$3e
+	sta $0518, x
+	//Load left bracket character
+	lda #$3c
+	sta $0522, x
+	//Paint chars yellow
+	lda #07
+	sta $d922, x 
+	sta $d918, x
+	
 	rts
+	
+.macro HomeRuntime(){
+	jsr home_runtime
+}
+
+home_runtime:
+	lda $dc01//Load joystick bits
+	and #01//Test for up
+	beq home_runtime_inc_option
+	lda $dc01//Load joystick bits
+	and #02//Test for up
+	.print $dc01
+	beq home_runtime_dec_option
+	home_runtime_rtn:
+	jmp home_runtime
+	rts
+	
+home_runtime_inc_option:
+
+
+/*
+	lda var_home_selected_option
+	clc
+	adc #40
+	sta var_home_selected_option
+	*/
+	DrawHomeOptions();
+	jmp home_runtime_rtn
+	
+home_runtime_dec_option:
+/*
+	lda var_home_selected_option
+	sec
+	sbc #40
+	sta var_home_selected_option
+	*/
+	DrawHomeOptions();
+	jmp home_runtime_rtn
+	
