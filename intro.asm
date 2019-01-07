@@ -10,6 +10,7 @@ var_intro_text_date_1: .text "Oct 05, 1986"
 var_intro_text_loc_0: .text "NORAD, Colorado, USA"
 var_intro_text_loc_1: .text "PCBH, Moscow, Soviet Union"
 var_intro_text_loc_2: .text "Ionosphere, Pacific Ocean"
+var_intro_text_loc_3: .text "Harlow, Essex, UK"
 										 
 var_war_text_0: .text "Immediate Casualties"
 var_war_stats_0: .text "2,734,532,342"              
@@ -20,9 +21,6 @@ intro_start:
 		lda #00               
 		sta $d020
 		sta $d021
-				
-		ClearSID();
-		
 		
 		ConfigEnv0($0e, $00);
 		ConfigEnv1($06, $00);
@@ -291,22 +289,10 @@ inc_fs_exp_hi:
 	SetCharColourWholeScreen(1);
 	DrawStarfield();
 	WriteString(0, 0, 40, var_basic_satellite_text, 13);
-}
+}      
 
 var_basic_satellite_text: .text "SODSAT 01 LON 63.61 LAT -175.64 23:59:57"
-menu_start:
-	PlayVoice(0, $01, $06, 0);
-	ConfigEnv2($00, $00);
-	ConfigEnv1($0c, $00);
-	PlayVoice(1, $f1, $11, 0);
-	ClearScreen(0, 0);
-	lda #00
-	sta $d020
-	lda #11
-	sta $d021
-	CycleDelay($ff)
-	jsr write_title_text
-	rts
+
 
 #import "utils.asm"
 #import "missiles.asm"
@@ -321,7 +307,7 @@ title_chars_start:
 .byte $00,$60,$60,$64,$00,$60,$00,$60,$00,$60,$00,$60,$00,$60,$00,$63,$00,$60,$00,$60,$00,$60,$60,$64,$00,$61,$60,$64,$00,$61,$60,$64,$00,$00,$00,$00,$00,$00,$00,$00
 
 title_text_0: .text "Fire to Start"
-title_text_1: .text "2019 Nick Stone"
+title_text_1: .text "2019 Chris Jones"
 
 write_title_text:
 	ldx #00
@@ -333,9 +319,26 @@ write_title_text:
 		bne write_title_text_loop
 		
 		CycleDelay($ff);
-		WriteString(1, 23, 15, title_text_1, 0);
+		WriteString(1, 23, 16, title_text_1, 0);
 		CycleDelay($ff);
 		WriteString(1, 6, 13, title_text_0, 1);
 		
 		rts
 
+
+
+menu_start:
+	ConfigEnv0($0c, $00);
+	ConfigEnv1($0e, $00);
+	ConfigEnv2($cc, $00);
+	PlayVoice(0, $01, $06, 0);
+	PlayVoice(1, $f1, $11, 0);
+	PlayVoice(2, $71, $11, 0);
+	ClearScreen(0, 0);
+	lda #00
+	sta $d020
+	lda #11
+	sta $d021
+	CycleDelay($ff)
+	jsr write_title_text
+	rts
