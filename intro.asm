@@ -143,7 +143,7 @@ intro_start:
 		ldy $30//Check if missiles have run out of time
 		iny
 		sty $30
-		cpy #120
+		cpy #160
 		beq end_missiles 
 		
 		ldy #00
@@ -177,8 +177,6 @@ intro_start:
 		CycleDelay($ff);
 		CycleDelay($ff);
 		CycleDelay($ff);
-		CycleDelay($ff);
-		CycleDelay($ff);
 		PlayVoice(2, $01, $11, 0);
 		WriteString(13, 3, 13, var_war_stats_0, 1);
 		CycleDelay($ff);
@@ -186,8 +184,6 @@ intro_start:
 		CycleDelay($ff);
 		PlayVoice(2, $01, $18, 0);
 		WriteString(9, 5, 22, var_war_text_1, 0);
-		CycleDelay($ff);
-		CycleDelay($ff);
 		CycleDelay($ff);
 		CycleDelay($ff);
 		CycleDelay($ff);
@@ -203,7 +199,7 @@ intro_start:
 		rts
 
 var_sat_tick: .byte $00
-var_sat_char: .byte $38
+var_sat_char: .byte $37
 
 .macro CheckSatTick()
 {
@@ -291,7 +287,7 @@ inc_fs_exp_hi:
 	WriteString(0, 0, 40, var_basic_satellite_text, 13);
 }      
 
-var_basic_satellite_text: .text "SODSAT 01 LON 63.61 LAT -175.64 23:59:57"
+var_basic_satellite_text: .text "SODSAT 01 LON 63.61 LAT -175.64 23:59:56"
 
 
 // TODO - THIS IS APPROXIMATE, THERE MAY BE MORE
