@@ -21,7 +21,7 @@ main_start:
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-	//	jsr intro_start
+		jsr intro_start
 		jsr menu_start
 		
 	main_start_await_fire:
@@ -42,7 +42,7 @@ game_start_title:
 	lda #00
 	sta $d020
 	sta $d021
-	/*
+	
 	CycleDelay($ff);
 	CycleDelay($ff);
 	WriteString(14, 1, 12, var_intro_text_date_1, 1);
@@ -52,7 +52,7 @@ game_start_title:
 	CycleDelay($ff);
 	CycleDelay($ff);
 	ClearScreen(0, 0);
-	*/
+	
 	rts
 
 #import "sound.asm"
@@ -102,6 +102,11 @@ draw_player_stats:
 }	
 
 
+var_last_joystick: .byte $00
+
+var_home_selected_option: .byte $00
+
+var_home_instr_text: .text "UP/DOWN to choose option, FIRE to select"
 
 
 draw_home_options:
@@ -112,6 +117,7 @@ draw_home_options:
 	WriteString(0, 9, 12, var_home_option_scavenge, 12);
 	WriteString(0, 10, 12, var_home_option_inventory, 12);
 	WriteString(0, 11, 12, var_home_option_sleep, 12);
+	WriteString(0, 13, 40, var_home_instr_text, 7);
 	
 	//Now we've written out the fucking text, draw the selected option
 	
@@ -135,9 +141,6 @@ draw_home_options:
 	jmp home_runtime
 }
 	
-var_last_joystick: .byte $00
-
-var_home_selected_option: .byte $00
 
 home_runtime:
 	lda $dc01					// Load joy values
@@ -148,10 +151,10 @@ home_runtime:
 
 home_runtime_joy_update:
 	lda $dc01
-	and #$02
+	and #$02 					// Down
 	beq home_inc_option
 	lda $dc01
-	and #$01
+	and #$01 					// Up
 	beq home_dec_option
 	jmp home_runtime
 
