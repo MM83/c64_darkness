@@ -14,13 +14,19 @@ note_F0: .word $0172
 note_Fs0: .word $0188
 note_G0: .word $019f
 
+var_last_joystick: .byte $00
+
 *=$2000                                         
 main_start:
 ClearSID();
+	main_loop:
+		lda $dc01
+		cmp var_last_joystick
+		sta var_last_joystick
+		bne update_from_joystick
+		jmp main_loop
 
-		ConfigEnv0($0f, $00);
-		PlayVoice(0, $01, $12, 3);
-
-
-jmp *
+update_from_joystick:
+	inc $d020
+	jmp main_loop
 

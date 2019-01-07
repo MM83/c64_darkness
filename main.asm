@@ -127,40 +127,41 @@ draw_home_options:
 	rts
 	
 .macro HomeRuntime(){
-	jsr home_runtime
+	jmp home_runtime
 }
+	
+var_last_joystick: .byte $00
 
 home_runtime:
-	lda $dc01//Load joystick bits
-	and #01//Test for up
-	beq home_runtime_inc_option
-	lda $dc01//Load joystick bits
-	and #02//Test for up
-	.print $dc01
-	beq home_runtime_dec_option
+	lda $dc01					// Load joy values
+	cmp var_last_joystick		// Compare to previous
+	sta var_last_joystick		// Store values
+	bne home_runtime_joy_update	// If changed, update
 	home_runtime_rtn:
 	jmp home_runtime
-	rts
 	
+home_runtime_joy_update:
+	inc $d020
+	lda var_last_joystick
+	and #01
+	beq home_runtime_inc_option
+	lda var_last_joystick
+	and #02
+	beq home_runtime_dec_option
+	jmp home_runtime
+
 home_runtime_inc_option:
-
-
-/*
-	lda var_home_selected_option
+	lda var_last_joystick
 	clc
 	adc #40
-	sta var_home_selected_option
-	*/
+	sta var_last_joystick
 	DrawHomeOptions();
 	jmp home_runtime_rtn
-	
+
 home_runtime_dec_option:
-/*
-	lda var_home_selected_option
-	sec
-	sbc #40
-	sta var_home_selected_option
-	*/
+	lda var_last_joystick
+	clc
+	adc #40
+	sta var_last_joystick
 	DrawHomeOptions();
 	jmp home_runtime_rtn
-	
