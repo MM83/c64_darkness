@@ -433,4 +433,19 @@ draw_stats_header:
 		bne draw_stats_header_loop
 	rts
 	
+	
+.macro ClearLowerScreen(){
+	jsr clear_lower_screen
+}
 
+clear_lower_screen:
+	ldx #00
+	txa
+	clear_lower_screen_loop:
+	sta $0500, x
+	sta $0600, x
+	sta $0700, x
+	inx
+	cpx #00
+	bne clear_lower_screen_loop
+	rts	

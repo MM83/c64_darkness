@@ -21,7 +21,7 @@ main_start:
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-		jsr intro_start
+	//	jsr intro_start
 		jsr menu_start
 		
 	main_start_await_fire:
@@ -43,7 +43,7 @@ game_start_title:
 	lda #00
 	sta $d020
 	sta $d021
-	
+	/*
 	CycleDelay($ff);
 	CycleDelay($ff);
 	WriteString(14, 1, 12, var_intro_text_date_1, 1);
@@ -53,7 +53,7 @@ game_start_title:
 	CycleDelay($ff);
 	CycleDelay($ff);
 	ClearScreen(0, 0);
-	
+	*/
 	rts
 
 #import "sound.asm"
@@ -111,7 +111,14 @@ var_last_joystick: .byte $00
 
 var_home_selected_option: .byte $00
 
-var_home_instr_text: .text "UP/DOWN to choose option, FIRE to select"
+
+//Each of the guide text strings is of equal length, wastes a few bytes here but saves more by allowing for a single method to write
+//Them all
+var_hint_construct: 	.text "Protect home against raiders and rodents"
+var_hint_nourish: 		.text "Eat, drink, medicate and intoxicate     "
+var_hint_scavenge: 	.text "Venture outside for supplies and sundry "
+var_hint_inventory: 	.text "Examine your current supply stash       "
+var_hint_sleep: 		.text "Lower your guard and get some rest!     "
 
 
 draw_home_options:
@@ -122,7 +129,6 @@ draw_home_options:
 	WriteString(0, 9, 12, var_home_option_scavenge, 12);
 	WriteString(0, 10, 12, var_home_option_inventory, 12);
 	WriteString(0, 11, 12, var_home_option_sleep, 12);
-	WriteString(0, 13, 40, var_home_instr_text, 7);
 	
 	//Now we've written out the fucking text, draw the selected option
 	
@@ -140,6 +146,27 @@ draw_home_options:
 	sta $d922, x 
 	sta $d918, x
 	
+	//Use the x offset to write the information text out (all strings are 40 chars, so the offset should work)
+	
+	
+	ldy #<var_hint_construct//Load and store the address for the first hint in zprs
+	sty $03
+	ldy #>var_hint_construct
+	sty $04
+	
+	txa	// Move x increment into y for addressing mode
+	tay
+	ldx #00 //Reset x to use as zero-start counter
+	
+	draw_hint_loop:
+		lda ($03), y
+		sta $0608, x
+		lda #07
+		sta $da08, x
+		inx
+		iny
+		cpx #40
+		bne draw_hint_loop
 	rts
 	
 .macro HomeRuntime(){
@@ -205,25 +232,86 @@ home_dec_option:
 reset_home_dec_option:
 	lda #160
 	jmp home_option_change_finish
-	
-.macro ClearLowerScreen(){
-	jsr clear_lower_screen
-}
 
-clear_lower_screen:
-	ldx #00
-	txa
-	clear_lower_screen_loop:
-	sta $0500, x
-	sta $0600, x
-	sta $0700, x
-	inx
-	cpx #00
-	bne clear_lower_screen_loop
-	rts	
 		
 // ===================================================================== END HOME	
 	
 home_next_option:
 	//TODO - This is the point where we work out what the fuck to display next
+	
+//	CycleDelay($af);//Delay prevents the fire button from triggering, needs a better solution
+	
+	lda $dc01
+	and #$10
+	beq home_next_option//Prevent advance until player has released fire
+	
+	lda var_home_selected_option
+	
+	cmp #00
+	beq jmp_home_page_construct
+	cmp #40
+	beq jmp_home_page_nourish
+	cmp #80
+	beq jmp_home_page_scavenge
+	cmp #120
+	beq jmp_home_page_inventory
+	cmp #160
+	beq jmp_home_page_sleep
+	
+
+// jmp -> to get around the address diff limit for branch instructions	
+
+jmp_home_page_construct:
+	jsr home_page_construct
+jmp_home_page_nourish:
+	jsr home_page_nourish
+jmp_home_page_scavenge:
+	jsr home_page_scavenge
+jmp_home_page_inventory:
+	jsr home_page_inventory
+jmp_home_page_sleep:
+	jsr home_page_sleep
+	
+	
+home_page_construct:
+	ldx #<var_home_option_construct
+	ldy #>var_home_option_construct
+	jsr draw_next_page_title
 	jmp *
+home_page_nourish:
+	ldx #<var_home_option_nourish
+	ldy #>var_home_option_nourish
+	jsr draw_next_page_title
+	jmp *
+home_page_scavenge:
+	ldx #<var_home_option_scavenge
+	ldy #>var_home_option_scavenge
+	jsr draw_next_page_title
+	jmp *
+home_page_inventory:
+	ldx #<var_home_option_inventory
+	ldy #>var_home_option_inventory
+	jsr draw_next_page_title
+	jmp *
+home_page_sleep:
+	ldx #<var_home_option_sleep
+	ldy #>var_home_option_sleep
+	jsr draw_next_page_title
+	jmp *
+	
+draw_next_page_title:		// This is used to draw the next title, assumes that A contains the start address of the text
+	
+	stx $03 //Store hi and lo of address in zero page registers
+	sty $04
+	ldy #00 // Set counter to zero
+	ldx #01
+	draw_next_page_title_loop:
+		lda ($03), y
+		sta $04ef, y
+		txa
+		sta $d8ef, y
+		iny
+		cpy #11
+		bne draw_next_page_title_loop
+		rts
+
