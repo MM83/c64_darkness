@@ -21,7 +21,7 @@ main_start:
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-	//	jsr intro_start
+		jsr intro_start
 		jsr menu_start
 		
 	main_start_await_fire:
@@ -43,7 +43,7 @@ game_start_title:
 	lda #00
 	sta $d020
 	sta $d021
-	/*
+	
 	CycleDelay($ff);
 	CycleDelay($ff);
 	WriteString(14, 1, 12, var_intro_text_date_1, 1);
@@ -53,7 +53,7 @@ game_start_title:
 	CycleDelay($ff);
 	CycleDelay($ff);
 	ClearScreen(0, 0);
-	*/
+	
 	rts
 
 #import "sound.asm"
@@ -124,11 +124,11 @@ var_hint_sleep: 		.text "Lower your guard and get some rest!     "
 draw_home_options:
 	//TODO - These strings are all the same length, this could be optimised
 	ClearLowerScreen();
-	WriteString(0, 7, 12, var_home_option_construct, 12);
-	WriteString(0, 8, 12, var_home_option_nourish, 12);
-	WriteString(0, 9, 12, var_home_option_scavenge, 12);
-	WriteString(0, 10, 12, var_home_option_inventory, 12);
-	WriteString(0, 11, 12, var_home_option_sleep, 12);
+	WriteString(0, 6, 12, var_home_option_construct, 12);
+	WriteString(0, 7, 12, var_home_option_nourish, 12);
+	WriteString(0, 8, 12, var_home_option_scavenge, 12);
+	WriteString(0, 9, 12, var_home_option_inventory, 12);
+	WriteString(0, 10, 12, var_home_option_sleep, 12);
 	
 	//Now we've written out the fucking text, draw the selected option
 	
@@ -137,14 +137,14 @@ draw_home_options:
 	
 	//Load left bracket character
 	lda #$3e
-	sta $0518, x
+	sta $04f0, x
 	//Load left bracket character
 	lda #$3c
-	sta $0522, x
+	sta $04fa, x
 	//Paint chars yellow
 	lda #07
-	sta $d922, x 
-	sta $d918, x
+	sta $d8fa, x 
+	sta $d8f0, x
 	
 	//Use the x offset to write the information text out (all strings are 40 chars, so the offset should work)
 	
@@ -160,9 +160,9 @@ draw_home_options:
 	
 	draw_hint_loop:
 		lda ($03), y
-		sta $0608, x
+		sta $05e0, x
 		lda #07
-		sta $da08, x
+		sta $d9e0, x
 		inx
 		iny
 		cpx #40
@@ -313,5 +313,5 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 		iny
 		cpy #11
 		bne draw_next_page_title_loop
-		rts
+	rts
 

@@ -442,9 +442,9 @@ clear_lower_screen:
 	ldx #00
 	txa
 	clear_lower_screen_loop:
-	sta $0500, x
-	sta $0600, x
-	sta $0700, x
+	sta $04d8, x
+	sta $05d8, x
+	sta $06d8, x
 	inx
 	cpx #00
 	bne clear_lower_screen_loop
