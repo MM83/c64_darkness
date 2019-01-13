@@ -21,8 +21,10 @@ main_start:
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-		jsr intro_start
-		jsr menu_start
+	//	jsr intro_start
+	//	jsr menu_start
+		jmp start_game // REMOVE THIS, TEMP JMP TO START WITHOUT ALL THE FUCKING AROUND
+		
 		
 	main_start_await_fire:
 		lda $dc01
@@ -43,7 +45,7 @@ game_start_title:
 	lda #00
 	sta $d020
 	sta $d021
-	
+	/*
 	CycleDelay($ff);
 	CycleDelay($ff);
 	WriteString(14, 1, 12, var_intro_text_date_1, 1);
@@ -53,7 +55,7 @@ game_start_title:
 	CycleDelay($ff);
 	CycleDelay($ff);
 	ClearScreen(0, 0);
-	
+	*/
 	rts
 
 #import "sound.asm"
@@ -83,11 +85,15 @@ home_screen:
 
 reset_player_stats:
 	//lda #96
-	lda #53
+	lda #96
 	sta var_stat_health
+	lda #46
 	sta var_stat_immune
+	lda #14
 	sta var_stat_morale
+	lda #27
 	sta var_stat_hunger
+	lda #45
 	sta var_stat_thirst
 	sta var_stat_energy
 	rts
@@ -95,16 +101,126 @@ reset_player_stats:
 .macro DrawPlayerStats()
 {
 	jsr draw_player_stats
+	
 }
 
 draw_player_stats:
+	DrawBlankStatBars();
+	DrawStatBar(0);
+	DrawStatBar(1);
+	DrawStatBar(2);
+	DrawStatBar(3);
+	DrawStatBar(4);
+	DrawStatBar(5);
 	rts
 	
+.macro DrawBlankStatBars(){
+	jsr draw_blank_stat_bars
+}
+
+draw_blank_stat_bars:
+	lda #$78
+	ldx #00
+	draw_blank_stat_bars_loop:
+		sta $0457, x
+		sta $046c, x
+		sta $047f, x
+		sta $0494, x
+		sta $04a7, x
+		sta $04bc, x
+		inx
+		cpx #12
+		bne draw_blank_stat_bars_loop
+	rts
+	
+.macro DrawStatBar(bar){                                  
+	//ZP 3/4 USED TO STORE BAR ADDRESS, 5 used to store value
+	.if(bar == 0)
+	{
+		lda #$56
+		sta $03
+		lda var_stat_health
+		sta $05
+		
+	}
+	.if(bar == 1)
+	{
+		lda #$6b
+		sta $03
+		lda var_stat_immune
+		sta $05
+	}
+	.if(bar == 2)
+	{
+		lda #$7e
+		sta $03
+		lda var_stat_morale
+		sta $05
+	}
+	.if(bar == 3)
+	{
+		lda #$93
+		sta $03
+		lda var_stat_hunger
+		sta $05
+	}
+	.if(bar == 4)
+	{
+		lda #$a6
+		sta $03
+		lda var_stat_thirst
+		sta $05
+	}
+	.if(bar == 5)
+	{
+		lda #$bb
+		sta $03
+		lda var_stat_energy
+		sta $05
+	}
+	jsr draw_stat_bar
+	
+}
+
+draw_stat_bar:
+	//All bars have the same hi byte:
+	lda #$04
+	sta $04
+	
+	//Reset the counters
+	ldy #00
+	ldx #00
+	
+	draw_stat_bar_loop:
+		// X counts up with the actual points
+		
+		//Get the character to print
+		txa //Transfer the x register
+		and #%00000111
+		beq draw_stat_inc_y
+		draw_stat_inc_y_rtn:
+		sta $07 //Store this value in zp 7
+		lda #$79//Load the base character into memory
+		clc
+		adc $07
+		
+		sta ($03), y
+		inx
+		cpx $05
+		bne draw_stat_bar_loop
+	rts
+
+draw_stat_inc_y:
+	iny
+	jmp draw_stat_inc_y_rtn
+
+
 	
 .macro DrawHomeOptions()
 {
 	jsr draw_home_options
 }	
+
 
 
 var_last_joystick: .byte $00
@@ -314,4 +430,3 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 		cpy #11
 		bne draw_next_page_title_loop
 	rts
-
