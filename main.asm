@@ -7,8 +7,21 @@
 
 #import "utils.asm"          
 #import "missiles.asm"
-
+#import "draw_box.asm"
 #import "page_sleep.asm"
+
+hour_lo: .byte $02
+hour_hi: .byte $01 
+ 
+day_lo: .byte $05 
+day_hi: .byte $00 
+ 
+month_lo: .byte $00 
+month_hi: .byte $01 
+ 
+year_lo: .byte $06 
+year_hi: .byte $08 
+
 
 *=$4000
 main_start:
@@ -77,6 +90,7 @@ home_screen:
 	DrawStatsHeader();
 	DrawPlayerStats();
 	DrawHomeOptions();
+	jsr write_date
 	HomeRuntime();
 	rts
 
@@ -311,7 +325,7 @@ home_select_option:
 	ClearLowerScreen();
 	PlayVoice(0, $01, $10, 0);
 	jmp home_next_option
-
+                                  
 // Increment the home option
 
 home_option_change_finish:
@@ -437,13 +451,61 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 
 
 
+write_date:
+	lda #48
+	clc
+	adc hour_lo
+	sta $0422
+	lda #48
+	adc hour_hi
+	sta $0421
+	lda #48
+	clc
+	adc day_lo
+	sta $0405
+	lda #48
+	adc day_hi
+	sta $0404
+	lda #48
+	clc
+	adc month_lo
+	sta $0408
+	lda #48
+	adc month_hi
+	sta $0407
+	lda #48
+	clc
+	adc year_lo
+	sta $040b
+	lda #48
+	adc year_hi
+	sta $040a
+	rts
+
+.macro IncrementHour(amount)
+{
+	clc
+	lda #amount
+	jsr increment_hour_lo
+	jsr write_date
+}
+
+increment_hour_lo:
+	//Add the lo hour and existing
+	adc day_lo
+	sta day_lo
+	rts
+
 
 //TODO - PUT IN CORRECT FILE, THIS IS ONLY FOR CONVENIENCE!
 
 sleep_page_text_0: .text "For how many hours should you sleep?"
 sleep_page_text_1: .text "1hrs  3hrs  5hrs  7hrs  9hrs  cancel"
-sleep_page_current_time: .byte $00
+sleep_page_text_2: .text "Going to sleep for 7hrs ...         "
+sleep_page_text_3: .text "Let us hope this night is a safe one"
 
+sleep_page_current_time: .byte $00
+sleep_amount_hours: .byte $00
 
 sleep_cancel:
 	rts
@@ -458,10 +520,32 @@ sleep_and_calculate:
 	asl//x2
 	sec
 	sbc #01
-	sta $0400
-	lda #01
-	sta $d800
-	jmp *
+	//Now we have the amount of hours, store:
+	sta sleep_amount_hours
+	sta $10
+	WriteString(2, 8, 36, sleep_page_text_2, 1);
+	lda $10
+	clc
+	adc #48
+	sta $0555 
+	WriteString(2, 10, 36, sleep_page_text_3, 11);
+	temp_loop:
+	IncrementHour(1)
+	ldx #00
+	temp_loop_2:
+		inx
+		cpx #00
+		bne temp_loop_2
+	temp_loop_3:
+		inx
+		cpx #00
+		bne temp_loop_3
+	temp_loop_4:
+		inx
+		cpx #00
+		bne temp_loop_4
+	
+	jmp temp_loop
 
 draw_page_sleep:
 	lda #02
@@ -497,11 +581,9 @@ sleep_select_option:
 	beq sleep_select_option//Prevent advance until player has released fire
 	ldx sleep_page_current_time
 	jsr sleep_and_calculate
+	
 	jmp *
 	//rts
-	
-	
-	
 	
 sleep_dec_option:
 	cpx #00

@@ -271,6 +271,8 @@ inc_seeded_rnd:
 	adc seed1
 	eor seed3
 	sta seed2
+	ror seed4
+	rol seed3
 	ror
 	sec
 	sbc seed1
@@ -290,6 +292,8 @@ inc_seeded_rnd:
 	clc
 	adc seed1
 	sta seed1
+	ror seed0
+	rol seed2
 	ror
 	sta seeded_random
 	rts
