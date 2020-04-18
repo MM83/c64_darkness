@@ -1,13 +1,13 @@
 .label var_sat_tick=$46ee
 .label var_last_joystick=$3a35
 .label clear_screen_start=$2810
-.label sleep_page_current_time=$3d0e
+.label sleep_page_current_time=$3d42
 .label _cycle_delay=$2852
-.label home_runtime_joy_update=$3bdd
+.label home_runtime_joy_update=$3c05
 .label write_title_text=$38bd
 .label init_seed_0=$2cb2
 .label var_home_option_scavenge=$2d47
-.label draw_selected_sleep_time_extend_cancel=$3d8d
+.label draw_selected_sleep_time_extend_cancel=$3e3c
 .label var_stat_hunger=$2d2e
 .label var_home_option_nourish=$2d3c
 .label init_seed_2=$2cb4
@@ -15,11 +15,11 @@
 .label init_seed_4=$2cb6
 .label title_text_1=$38ad
 .label init_seed_3=$2cb5
-.label draw_selected_sleep_time_loop_0=$3d5a
+.label draw_selected_sleep_time_loop_0=$3e09
 .label _write_text_loop=$2841
 .label title_text_0=$38a0
-.label home_page_nourish=$3c7b
-.label draw_selected_sleep_time_loop_1=$3d72
+.label home_page_nourish=$3ca3
+.label draw_selected_sleep_time_loop_1=$3e21
 .label inc_seeded_rnd=$2ce4
 .label clear_lower_screen=$2f0d
 .label loop_missile_x=$4556
@@ -29,13 +29,13 @@
 .label var_hint_inventory=$3aaf
 .label missile_1_switch=$2f4b
 .label draw_stat_inc_y_rtn=$3a22
-.label draw_next_page_title_loop=$3cb7
-.label jmp_home_page_nourish=$3c62
+.label draw_next_page_title_loop=$3ceb
+.label jmp_home_page_nourish=$3c8a
 .label missile_3_switch=$2f7b
-.label home_option_change_finish=$3c04
+.label home_option_change_finish=$3c2c
 .label _cycle_delay_x=$2856
 .label store_regs_zp=$471b
-.label jmp_home_page_inventory=$3c68
+.label jmp_home_page_inventory=$3c90
 .label var_home_option_construct=$2d31
 .label move_missile_1_rtn=$2f4a
 .label inc_fs_exp_hi=$474e
@@ -53,7 +53,8 @@
 .label _var_write_str_char=$2827
 .label play_note_2=$4096
 .label write_title_text_loop=$38bf
-.label draw_next_page_title=$3caf
+.label draw_next_page_title=$3ce3
+.label sleep_cancel=$3d43
 .label var_hint_sleep=$3ad7
 .label sprite_1=$3000
 .label _var_write_str_bank=$2826
@@ -64,8 +65,9 @@
 }
 .label draw_blank_stat_bars_loop=$39fd
 .label var_missile_0_vel=$2f1f
+.label var_hint_exercise=$3aff
 .label missile_0_new_y=$2f3b
-.label jmp_home_page_scavenge=$3c65
+.label jmp_home_page_scavenge=$3c8d
 .label seed0=$2cb7
 .label draw_stats_header_loop=$2efb
 .label var_home_selected_option=$3a36
@@ -78,18 +80,19 @@
 .label seed1=$2cb8
 .label menu_start=$3917 {
 }
+.label sleep_dec_option=$3dd9
 .label draw_stat_bar_loop=$3a1d
-.label reset_home_inc_option=$3c23
-.label jmp_home_page_construct=$3c5f
+.label reset_home_inc_option=$3c4b
+.label jmp_home_page_construct=$3c87
 .label missile_launched_text_usa=$28a2
 .label missile_2_switch=$2f63
-.label draw_hint_loop=$3bbe
-.label sleep_page_text_0=$3cc6
+.label draw_hint_loop=$3be6
+.label sleep_page_text_0=$3cfa
 .label var_standard_header_cols=$2e31
 .label draw_stats_header=$2ef9
 .label end_missiles=$457f {
 }
-.label sleep_page_text_1=$3cea
+.label sleep_page_text_1=$3d1e
 .label fullscreen_explosion=$472d
 .label _var_write_str_length=$2825
 .label game_start_title=$4048 {
@@ -98,46 +101,50 @@
 .label var_missile_2_vel=$2f21
 .label main_start=$4000 {
 }
-.label draw_home_options=$3aff {
+.label draw_home_options=$3b27 {
 }
-.label draw_selected_colour_loop=$3d84
+.label draw_selected_colour_loop=$3e33
 .label move_missile_0_rtn=$2f2f
 .label var_stat_immune=$2d2c
 .label var_stat_morale=$2d2d
 .label var_home_option_sleep=$2d5d
 .label draw_blank_stat_bars=$39f9
+.label sleep_and_calculate=$3d44
 .label start_game=$4035 {
 }
-.label jmp_home_page_sleep=$3c6b
+.label jmp_home_page_sleep=$3c93
 .label var_stat_health=$2d2b
+.label sleep_select_option=$3dc9
 .label var_war_stats_0=$412d
-.label home_page_sleep=$3ca2
+.label home_page_sleep=$3cd3
 .label var_war_stats_1=$4150
 .label clear_sid_loop=$405f
-.label draw_page_sleep=$3d0f
+.label draw_page_sleep=$3d59
 .label var_intro_text_date_0=$40a9
 .label _var_cycle_delay_lo=$2851
 .label var_intro_text_date_1=$40b5
 .label var_war_text_1=$413a
-.label draw_selected_colour=$3d7d
+.label draw_selected_colour=$3e2c
 .label var_war_text_0=$4119
 .label move_missile_2_rtn=$2f62
-.label home_inc_option=$3c0d {
+.label home_inc_option=$3c35 {
 }
-.label home_dec_option=$3c28 {
+.label home_dec_option=$3c50 {
 }
+.label sleep_inc_five=$3dfd
 .label clear_lower_screen_loop=$2f10
 .label fullscreen_explosion_loop=$4733 {
 }
 .label intro_flash_loop_2=$4354 {
 }
-.label home_select_option=$3bf5 {
+.label home_select_option=$3c1d {
 }
 .label var_home_option_inventory=$2d52
 .label main_start_await_fire=$402b
 .label var_static_colours=$4729
 .label draw_launched_loop=$288c
-.label home_page_construct=$3c6e
+.label home_page_construct=$3c96
+.label sleep_dec_zero=$3df5
 .label draw_stat_inc_y=$3a31
 .label var_missile_1_vel=$2f20
 .label check_sat_tick=$46f0
@@ -146,7 +153,7 @@
 .label var_hint_construct=$3a37
 .label var_missile_3_vel=$2f22
 .label move_missile_3=$2f6e
-.label home_page_scavenge=$3c88
+.label home_page_scavenge=$3cb3
 .label move_missile_2=$2f56
 .label move_missile_1=$2f3e
 .label move_missile_0=$2f23
@@ -156,10 +163,12 @@
 .label var_hint_nourish=$3a5f
 .label home_screen=$3973 {
 }
-.label draw_page_sleep_loop_0=$3d52
-.label home_runtime=$3bcf
-.label draw_selected_sleep_time=$3d56
-.label home_next_option=$3c41
+.label sleep_runtime_joy_update=$3dae
+.label draw_page_sleep_loop_0=$3d9f
+.label home_runtime=$3bf7
+.label draw_selected_sleep_time=$3e05
+.label home_next_option=$3c69
+.label sleep_inc_option=$3de7
 .label missile_launched_text_ussr=$2aaa
 .label var_hint_scavenge=$3a87
 .label missile_0_switch=$2f30
@@ -167,7 +176,7 @@
 .label _sub_inc_set_rnd=$2d22 {
 }
 .label set_screen_chars_col=$2800
-.label reset_home_dec_option=$3c3c
-.label home_page_inventory=$3c95
-.label draw_selected_sleep_time_loop_0_rtn=$3d6b
+.label reset_home_dec_option=$3c64
+.label home_page_inventory=$3cc3
+.label draw_selected_sleep_time_loop_0_rtn=$3e1a
 .label ret_sat_tick=$471a

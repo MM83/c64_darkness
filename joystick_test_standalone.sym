@@ -1,0 +1,5 @@
+.label cont4=$1034
+.label cont3=$102a
+.label cont2=$1020
+.label start=$1000
+.label cont1=$1016

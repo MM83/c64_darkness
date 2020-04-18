@@ -232,6 +232,7 @@ var_hint_nourish: 		.text "Eat, drink, medicate and intoxicate     "
 var_hint_scavenge: 	.text "Venture outside for supplies and sundry "
 var_hint_inventory: 	.text "Examine your current supply stash       "
 var_hint_sleep: 		.text "Lower your guard and get some rest!     "
+var_hint_exercise: 		.text "Keep your health up with some exercise  "
 
 
 draw_home_options:
@@ -388,30 +389,34 @@ home_page_construct:
 	ldy #>var_home_option_construct
 	jsr draw_next_page_title
 	jsr draw_page_sleep
-	jmp *
+	HomeScreen();
 home_page_nourish:
 	ldx #<var_home_option_nourish
 	ldy #>var_home_option_nourish
 	jsr draw_next_page_title
 	jsr draw_page_sleep
+	HomeScreen();
 	jmp *
 home_page_scavenge:
 	ldx #<var_home_option_scavenge
 	ldy #>var_home_option_scavenge
 	jsr draw_next_page_title
 	jsr draw_page_sleep
+	HomeScreen();
 	jmp *
 home_page_inventory:
 	ldx #<var_home_option_inventory
 	ldy #>var_home_option_inventory
 	jsr draw_next_page_title
 	jsr draw_page_sleep
+	HomeScreen();
 	jmp *
 home_page_sleep:
 	ldx #<var_home_option_sleep
 	ldy #>var_home_option_sleep
 	jsr draw_next_page_title
 	jsr draw_page_sleep
+	HomeScreen();
 	jmp *
 	
 draw_next_page_title:		// This is used to draw the next title, assumes that A contains the start address of the text
@@ -436,20 +441,95 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 //TODO - PUT IN CORRECT FILE, THIS IS ONLY FOR CONVENIENCE!
 
 sleep_page_text_0: .text "For how many hours should you sleep?"
-sleep_page_text_1: .text "1hrs  2hrs  4hrs  6hrs  8hrs  cancel"
-sleep_page_current_time: .byte $05
+sleep_page_text_1: .text "1hrs  3hrs  5hrs  7hrs  9hrs  cancel"
+sleep_page_current_time: .byte $00
 
+
+sleep_cancel:
+	rts
+	
+	
+sleep_and_calculate:
+	cpx #05 // Cancel
+	beq sleep_cancel
+	//x2-1 to get hour value
+	inx
+	txa
+	asl//x2
+	sec
+	sbc #01
+	sta $0400
+	lda #01
+	sta $d800
+	jmp *
 
 draw_page_sleep:
-	lda #00
-	//sta sleep_page_current_time
+	lda #02
+	sta sleep_page_current_time
 	WriteString(2, 8, 36, sleep_page_text_0, 1);
 	WriteString(2, 10, 36, sleep_page_text_1, 11);
 	jsr draw_selected_sleep_time
 	draw_page_sleep_loop_0:
-		
+		lda $dc01					// Load joy values
+		cmp var_last_joystick		// Compare to previous
+		sta var_last_joystick		// Store values
+		bne sleep_runtime_joy_update	// If changed, update
 		jmp draw_page_sleep_loop_0
 	rts
+
+
+sleep_runtime_joy_update:
+	lda $dc01
+	ldx sleep_page_current_time
+	and #$02 					// Down
+	beq sleep_inc_option
+	lda $dc01
+	and #$01 					// Up
+	beq sleep_dec_option
+	lda $dc01
+	and #$10 					// Fire
+	beq sleep_select_option
+	jmp draw_page_sleep_loop_0
+
+sleep_select_option:
+	lda $dc01
+	and #$10
+	beq sleep_select_option//Prevent advance until player has released fire
+	ldx sleep_page_current_time
+	jsr sleep_and_calculate
+	jmp *
+	//rts
+	
+	
+	
+	
+sleep_dec_option:
+	cpx #00
+	beq sleep_dec_zero
+	txa
+	sec
+	sbc #01
+	sta sleep_page_current_time
+	jmp draw_page_sleep_loop_0
+	
+sleep_inc_option:
+	cpx #00
+	beq sleep_dec_zero
+	txa
+	clc
+	adc #01
+	sta sleep_page_current_time
+	jmp draw_page_sleep_loop_0
+	
+sleep_dec_zero:
+	ldx #05
+	stx sleep_page_current_time
+	jmp draw_page_sleep_loop_0
+	
+sleep_inc_five:
+	ldx #00
+	stx sleep_page_current_time
+	jmp draw_page_sleep_loop_0
 
 draw_selected_sleep_time:
 	//First, colour the whole bar
@@ -499,5 +579,4 @@ draw_selected_sleep_time_extend_cancel:
 	jmp draw_selected_sleep_time_loop_0_rtn
 	
 	rts
-
 
