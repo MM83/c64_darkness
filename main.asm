@@ -5,8 +5,10 @@
 *=$2000
 #import "char_map.asm"
 
-#import "utils.asm"
+#import "utils.asm"          
 #import "missiles.asm"
+
+#import "page_sleep.asm"
 
 *=$4000
 main_start:
@@ -21,9 +23,9 @@ main_start:
 		sta $dc02
 		
 		//NOTE - Make sure these are both called in the full game
-	//	jsr intro_start
-	//	jsr menu_start
 		jmp start_game // REMOVE THIS, TEMP JMP TO START WITHOUT ALL THE FUCKING AROUND
+		jsr intro_start
+		jsr menu_start
 		
 		
 	main_start_await_fire:
@@ -84,16 +86,11 @@ home_screen:
 }
 
 reset_player_stats:
-	//lda #96
 	lda #96
 	sta var_stat_health
-	lda #46
 	sta var_stat_immune
-	lda #14
 	sta var_stat_morale
-	lda #27
 	sta var_stat_hunger
-	lda #45
 	sta var_stat_thirst
 	sta var_stat_energy
 	rts
@@ -355,8 +352,6 @@ reset_home_dec_option:
 home_next_option:
 	//TODO - This is the point where we work out what the fuck to display next
 	
-//	CycleDelay($af);//Delay prevents the fire button from triggering, needs a better solution
-	
 	lda $dc01
 	and #$10
 	beq home_next_option//Prevent advance until player has released fire
@@ -374,7 +369,6 @@ home_next_option:
 	cmp #160
 	beq jmp_home_page_sleep
 	
-
 // jmp -> to get around the address diff limit for branch instructions	
 
 jmp_home_page_construct:
@@ -393,26 +387,31 @@ home_page_construct:
 	ldx #<var_home_option_construct
 	ldy #>var_home_option_construct
 	jsr draw_next_page_title
+	jsr draw_page_sleep
 	jmp *
 home_page_nourish:
 	ldx #<var_home_option_nourish
 	ldy #>var_home_option_nourish
 	jsr draw_next_page_title
+	jsr draw_page_sleep
 	jmp *
 home_page_scavenge:
 	ldx #<var_home_option_scavenge
 	ldy #>var_home_option_scavenge
 	jsr draw_next_page_title
+	jsr draw_page_sleep
 	jmp *
 home_page_inventory:
 	ldx #<var_home_option_inventory
 	ldy #>var_home_option_inventory
 	jsr draw_next_page_title
+	jsr draw_page_sleep
 	jmp *
 home_page_sleep:
 	ldx #<var_home_option_sleep
 	ldy #>var_home_option_sleep
 	jsr draw_next_page_title
+	jsr draw_page_sleep
 	jmp *
 	
 draw_next_page_title:		// This is used to draw the next title, assumes that A contains the start address of the text
@@ -420,7 +419,7 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 	stx $03 //Store hi and lo of address in zero page registers
 	sty $04
 	ldy #00 // Set counter to zero
-	ldx #01
+	ldx #07
 	draw_next_page_title_loop:
 		lda ($03), y
 		sta $04ef, y
@@ -430,3 +429,75 @@ draw_next_page_title:		// This is used to draw the next title, assumes that A co
 		cpy #11
 		bne draw_next_page_title_loop
 	rts
+
+
+
+
+//TODO - PUT IN CORRECT FILE, THIS IS ONLY FOR CONVENIENCE!
+
+sleep_page_text_0: .text "For how many hours should you sleep?"
+sleep_page_text_1: .text "1hrs  2hrs  4hrs  6hrs  8hrs  cancel"
+sleep_page_current_time: .byte $05
+
+
+draw_page_sleep:
+	lda #00
+	//sta sleep_page_current_time
+	WriteString(2, 8, 36, sleep_page_text_0, 1);
+	WriteString(2, 10, 36, sleep_page_text_1, 11);
+	jsr draw_selected_sleep_time
+	draw_page_sleep_loop_0:
+		
+		jmp draw_page_sleep_loop_0
+	rts
+
+draw_selected_sleep_time:
+	//First, colour the whole bar
+	ldx #00
+	lda #09
+	
+	draw_selected_sleep_time_loop_0:
+		sta $d990, x
+		inx
+		cpx #38
+		bne draw_selected_sleep_time_loop_0
+		
+		//Draw the selected option	
+		ldx #05
+		ldy sleep_page_current_time
+		cpy #05//If it's cancel, needs to be a little longer
+		beq draw_selected_sleep_time_extend_cancel
+		
+		draw_selected_sleep_time_loop_0_rtn:
+			stx $10//Store the final character count in zp10
+			// Work out the offset
+			clc
+			lda #00//The eventual value			
+			ldx #00//The counter
+			draw_selected_sleep_time_loop_1:
+				cpx sleep_page_current_time//Check first off, in case it's zero
+				beq draw_selected_colour
+				adc #06
+				inx
+				jmp draw_selected_sleep_time_loop_1
+				
+	draw_selected_colour:
+			tax
+			adc $10//Add the length to the start position
+			sta $10//Overwrite 
+			lda #10
+			draw_selected_colour_loop:
+				sta $d990, x
+				inx
+				cpx $10
+				bne draw_selected_colour_loop
+			
+	rts
+		
+draw_selected_sleep_time_extend_cancel:
+	ldx #7
+	jmp draw_selected_sleep_time_loop_0_rtn
+	
+	rts
+
+

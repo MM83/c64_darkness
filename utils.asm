@@ -391,12 +391,12 @@ _sub_inc_set_rnd:
 	jsr draw_stats_header
 }
 
-var_stat_health: .byte $10
-var_stat_immune: .byte $20
+var_stat_health: .byte $30
+var_stat_immune: .byte $30
 var_stat_morale: .byte $30
-var_stat_hunger: .byte $40
-var_stat_thirst: .byte $50
-var_stat_energy: .byte $60
+var_stat_hunger: .byte $30
+var_stat_thirst: .byte $30
+var_stat_energy: .byte $30
 
 var_home_option_construct: .text   " CONSTRUCT "
 var_home_option_nourish: .text   " NOURISH   "
