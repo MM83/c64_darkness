@@ -15,6 +15,9 @@ DrawPixel
 
 
 
+
+
+
 .macro SetBitmapMode()
 {
 		lda #%00111011 // Set graphics mode
