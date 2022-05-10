@@ -1,0 +1,5 @@
+.label rnd_main=$2000
+.label rnd_indices=$2001
+.label last_rnd=$2048
+.label rnd_batch=$2008
+.label random_gen=$2049

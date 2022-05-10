@@ -1,0 +1,17 @@
+.label _cc_addyinc=$202f
+.label pixel_bytes=$2000
+.label _cc_addxinc=$201b
+.label _cc_initdraw=$2034
+.label _cc_addx=$200e
+.label set_screen_colour=$2063
+.label _sscend=$2079
+.label _cc_addy=$2020
+.label _cs_main_loop_end=$2062
+.label _ssc_loop=$2065
+.label _cs_incy=$2058
+.label _ccdl=$203a
+.label clear_screen=$2042
+.label _cs_main_loop=$204e
+.label COLOUR_DATA=$400
+.label BITMAP_DATA=$2000
+.label clear_cell=$2008
